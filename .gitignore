@@ -1,0 +1,10 @@
+
+__pycache__/
+
+\.vscode/
+
+tensorflow/gcloud_account\.json
+
+tensorflow/trained_model/
+
+static/tmp/

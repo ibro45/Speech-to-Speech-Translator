@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>The Babel Fish v0.01</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+  </head>
+  <body>
+    <h1>The Babel Fish v0.01</h1>
+    
+
+    <p>
+      The code can be found: 
+    </p>
+    <div id="controls">
+  	 <button id="recordButton">Record</button>
+  	 <button id="stopButton" disabled>Stop</button>
+    </div>
+    <div id="formats">Format: start recording to see sample rate</div>
+    <br>
+    <img id="flag" src="{{ url_for('static', filename='images/none.png') }}" alt="Flag">
+    <table>
+      <caption>Confidence</caption>
+      <tr>
+        <td>Croatian: </td>
+        <td id="croatian">0.0000</td>
+      </tr>
+      <tr>
+        <td>French: </td>
+        <td id="french">0.0000</td>
+      </tr>
+      <tr>
+          <td>Spanish: </td>
+          <td id="spanish">0.0000</td>
+        </tr>
+    </table>
+    <h3 class="label">Transcribed</h3>
+    <p id="transcription">The transcription of what you say will be written here.</p>
+    <br>
+
+    <h3>Translated</h3>
+    <p id="translation">The English translation of the above transcription is shown here.</p>
+    <br>
+  	<audio id="audio_player" controls>
+      <source id="output_speech" src="static/welcome.mp3" type="audio/mpeg">
+    </audio>
+    <!-- inserting these scripts at the end to be able to use all the elements in the DOM -->
+  	<script src="https://cdn.rawgit.com/mattdiamond/Recorderjs/08e7abd9/dist/recorder.js"></script>
+  	<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="  crossorigin="anonymous"></script>
+  </body>
+</html>

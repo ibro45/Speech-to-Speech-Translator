@@ -1,0 +1,11 @@
+input_shape: [129, 150, 1]
+pixel_per_second: 50
+
+num_classes: 3
+label_names: ["croatian", "french", "spanish"]
+
+
+
+
+
+
