@@ -22,7 +22,8 @@ var clickedStop
 var reqs = []
 
 function startRecording() {
-	reqs = [];
+	
+	reqs = []; // basically resets the number of requests 
 	$("#flag").attr('src', "static/images/none.png");
 
 	$("#croatian").html('0.0000')
@@ -117,7 +118,7 @@ function waitForRequestsToBeDone() {
 		// 3 is the number of requests in the function transcription_translation_speech()
 		// It waits for them all to be done in order to let the user use the functionality again
 		if(reqs.length < 3) { 
-			setTimeout(waitForRequestsToBeDone, 50);//wait 50 millisecnds then recheck
+			setTimeout(waitForRequestsToBeDone, 50); //wait 50 milliseconds then recheck
 			return;
 		}
 		recordButton.disabled = false
