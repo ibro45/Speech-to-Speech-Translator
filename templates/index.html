@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>The Babel Fish v0.01</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
   </head>
   <body>
@@ -11,7 +12,12 @@
     
 
     <p>
-      The code can be found: 
+      This application is able to detect the language you're speaking (Croatian, French and Spanish supported) and
+      translate it to English.
+    </p>
+    <p>
+      The Babel Fish v0.01's code can be found at this <a target="_blank" rel="noopener noreferrer" href='https://github.com/ibro45/Speech-to-Speech-Translator'>link</a>.
+      <br>Neural network for language identification is created using my other project - <a target="_blank" rel="noopener noreferrer" href='https://github.com/ibro45/Language-Identification-Speech'>Language Identification From Speech</a>
     </p>
     <div id="controls">
   	 <button id="recordButton">Record</button>

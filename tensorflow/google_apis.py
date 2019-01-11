@@ -63,7 +63,7 @@ def text_to_speech(text, language_code='en-GB'):
     # voice gender ("neutral")
     voice = texttospeech.types.VoiceSelectionParams(
         language_code=language_code,
-        ssml_gender=texttospeech.enums.SsmlVoiceGender.FEMALE)
+        ssml_gender=texttospeech.enums.SsmlVoiceGender.MALE)
 
     # Select the type of audio file you want returned
     audio_config = texttospeech.types.AudioConfig(
