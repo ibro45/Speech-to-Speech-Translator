@@ -114,7 +114,9 @@ async function stopRecording() {
 }
 
 function waitForRequestsToBeDone() {
-		if(reqs.length < 4) {//we want it to match
+		// 3 is the number of requests in the function transcription_translation_speech()
+		// It waits for them all to be done in order to let the user use the functionality again
+		if(reqs.length < 3) { 
 			setTimeout(waitForRequestsToBeDone, 50);//wait 50 millisecnds then recheck
 			return;
 		}
@@ -122,51 +124,65 @@ function waitForRequestsToBeDone() {
 	}
 
 function sendData(blob) {
+	// Function that sends the audio to the backend and receives the response
+	// that contains the path (filename) of the audio, detected language,
+	// path to the flag img for the detected language, and the probabilites of its confidence 
 	var xhr = new XMLHttpRequest();
     xhr.open("POST", "/", true);
     xhr.setRequestHeader("content-type", "audio/wav");
     xhr.onload = function(e) {
-		all_requests()
-    }
+		var response = JSON.parse(xhr.response)
+		show_flag_probs(response.flag, response.probabilities)
+		transcription_translation_speech(response.filename, response.detected_lang)
+	}
     xhr.send(blob);
 }
 
-function all_requests(){
+
+function show_flag_probs(flag, probabilities){
+	$("#flag").attr('src', flag);
+	probabilities = probabilities.split(' ')
+	$("#croatian").html(probabilities[0])
+	$("#french").html(probabilities[1])
+	$("#spanish").html(probabilities[2])
+}
+
+function transcription_translation_speech(filename, detected_lang){
+	var transcription
+	var translation
+
 	var req = $.get({
-		url:"/get_flag_and_probs", 
-		cache: false,
-		success: function(result){
-			$("#flag").attr('src', result.flag);
-			probabilites = result.probabilities
-			probabilites = probabilites.split(' ')
-			$("#croatian").html(probabilites[0])
-			$("#french").html(probabilites[1])
-			$("#spanish").html(probabilites[2])
-			}
-		}
-	)
-	.done(function(){
-		reqs.push(req)
-		req = $.get({
-			url:"/get_transcription", 
+			url:"/get_transcription",
+			data: {
+				filename: filename,
+				detected_lang: detected_lang
+			}, 
 			cache: false,
 			success: function(result){
-				$("#transcription").html(result.transcription)
+				transcription = result.transcription
+				$("#transcription").html(transcription)
 			}
 		})
 		.done(function(){
-			reqs.push(req)
+			reqs.push(req) // for counting the number of requests afterwards in the waitForRequestsToBeDone()
 			req = $.get({
 				url:"/get_translation", 
+				data: {
+					transcription: transcription
+				},
 				cache: false,
 				success: function(result){
-					$("#translation").html(result.translation)
+					translation = result.translation
+					$("#translation").html(translation)
 				}
 			})
 			.done(function(){
-				reqs.push(req)
+				reqs.push(req) // for counting the number of requests afterwards in the waitForRequestsToBeDone()
 				req = $.get({
 					url:"/get_output_speech", 
+					data: {
+						translation: translation
+					},
 					cache: false,
 					success: function(result){
 						var audioPlayer = $("#audio_player");
@@ -177,8 +193,6 @@ function all_requests(){
 					}
 				});
 			})
-			reqs.push(req)
+			reqs.push(req) // for counting the number of requests afterwards in the waitForRequestsToBeDone()
 		})
-	})
-	
-}
+	}
