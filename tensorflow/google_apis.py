@@ -7,7 +7,7 @@ from google.cloud import speech
 from google.cloud.speech import enums
 from google.cloud.speech import types
 from google.cloud import translate
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/media/bro/New Volume/Zavrsni rad/zavrsni-webapp/tensorflow/gcloud_account.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/media/bro/New Volume/Zavrsni rad/Speech-to-Speech-Translator/tensorflow/gcloud_account.json"
 
 lang_codes = {'croatian': 'hr-HR',
               'french'  : 'fr-FR',
@@ -15,7 +15,7 @@ lang_codes = {'croatian': 'hr-HR',
 
 def transcribe_speech(speech_file, detected_lang): 
     language_code = lang_codes[detected_lang]
-    """Transcribe the given audio file."""
+    # Transcribe the given audio file
     client = speech.SpeechClient()
 
     with io.open(speech_file, 'rb') as audio_file:
@@ -24,7 +24,7 @@ def transcribe_speech(speech_file, detected_lang):
     audio = types.RecognitionAudio(content=content)
     config = types.RecognitionConfig(
         encoding=enums.RecognitionConfig.AudioEncoding.LINEAR16,
-        sample_rate_hertz=44100, #16000,
+        sample_rate_hertz=44100,
         language_code=language_code) 
 
     response = client.recognize(config, audio)
@@ -37,7 +37,7 @@ def transcribe_speech(speech_file, detected_lang):
         transcribed += result.alternatives[0].transcript
 
     print('Final transcript: {}'.format(transcribed))
-    #return result.alternatives[0].transcript
+    
     return transcribed
 
 

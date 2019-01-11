@@ -25,79 +25,71 @@ def prolong_audio(fname, expected_duration):
     final = f + silence
     final.export(fname, format="wav")
 
-class appData:
 
-    def __init__(self):
-        self.filename = ""
-        self.flag = ""
-        self.transcribed = ""
-        self.translated = ""
-        self.output_speech = ""
-        self.detected_lang = ""
-        self.probabilities = ""
 
-app_data = appData()
 
 app = Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    global data
+    data = {'filename': "", 'flag': "", 'transcribed': "", 'translated': "", 'output_speech':"", 'detected_lang': "", 'probabilities': ""}
 
     if request.method == 'POST':
-        app_data.filename = 'static/tmp/recording_{0}.wav'.format(uuid.uuid4())
-        app_data.downsampled = 'static/tmp/downsampled_{0}.wav'.format(uuid.uuid4())
+        data['filename'] = 'static/tmp/recording_{0}.wav'.format(uuid.uuid4())
+        downsampled = 'static/tmp/downsampled_{0}.wav'.format(uuid.uuid4())
 
-        f = open(app_data.filename, 'wb')
+        f = open(data['filename'], 'wb')
         f.write(request.data)
         f.close()
 
-        prolong_audio(app_data.filename, 3)
+        prolong_audio(data['filename'], 3)
 
-        command = ["ffmpeg", "-i", app_data.filename, "-map", "0", "-ac", "1", "-ar", "16000", app_data.downsampled]
+        command = ["ffmpeg", "-i", data['filename'], "-map", "0", "-ac", "1", "-ar", "16000", downsampled]
         subprocess.call(command)
         
         # audio normalisation
-        neg23File(app_data.downsampled)
+        neg23File(downsampled)
 
         # detecting the language in audio 
         try:
-            app_data.detected_lang, app_data.probabilities = predict(app_data.downsampled)
-            app_data.probabilities = ' '.join(str(format(elem, '.4f')) for elem in app_data.probabilities)
+            data['detected_lang'], data['probabilities'] = predict(downsampled)
+            data['probabilities'] = ' '.join(str(format(elem, '.4f')) for elem in data['probabilities'])
         except Exception as e:
             print( 'Error occured:\n{}'.format(e) )
 
-        os.remove(app_data.downsampled)
+        os.remove(downsampled)
 
-        app_data.flag = 'static/images/{}.png'.format(app_data.detected_lang)
+        data['flag'] = 'static/images/{}.png'.format(data['detected_lang'])
  
     return render_template('index.html')
 
 
 @app.route('/get_flag_and_probs', methods=['GET'])
 def get_flag_image():
-    return jsonify(flag=app_data.flag, probabilities=app_data.probabilities)
+    return jsonify(flag=data['flag'], probabilities=data['probabilities'])
 
 
 @app.route('/get_transcription', methods=['GET'])
 def get_transcription():
     # transcribes what's said in the audio. Does it better when the audio's not downsampled.
-    app_data.transcribed = transcribe_speech(app_data.filename, app_data.detected_lang)
-    os.remove(app_data.filename)
-    return jsonify(transcription=app_data.transcribed)
+    data['transcribed'] = transcribe_speech(data['filename'], data['detected_lang'])
+    os.remove(data['filename'])
+    return jsonify(transcription=data['transcribed'])
 
 
 @app.route('/get_translation', methods=['GET'])
 def get_translation():
-    app_data.translated = translate_text(app_data.transcribed)
-    return jsonify(translation=app_data.translated)
+    data['translated'] = translate_text(data['transcribed'])
+    return jsonify(translation=data['translated'])
 
 
 @app.route('/get_output_speech', methods=['GET'])
 def get_output_speech():
     # text-to-speech of the translated text
-    app_data.output_speech = text_to_speech(app_data.translated)
-    return jsonify(output_speech=app_data.output_speech)
+    data['output_speech'] = text_to_speech(data['translated'])
+    return jsonify(output_speech=data['output_speech'])
 
 
 if __name__ == "__main__":
-    app.run(debug=False) 
+    app.run(debug=False, threaded=True) 
