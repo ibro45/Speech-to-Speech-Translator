@@ -7,7 +7,8 @@ from google.cloud import speech
 from google.cloud.speech import enums
 from google.cloud.speech import types
 from google.cloud import translate
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/media/bro/New Volume/Zavrsni rad/Speech-to-Speech-Translator/tensorflow/gcloud_account.json"
+
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./gcloud_account.json"
 
 lang_codes = {'croatian': 'hr-HR',
               'french'  : 'fr-FR',
@@ -52,7 +53,7 @@ def translate_text(text, target_language='en'):
     return html.unescape(translation['translatedText'])
 
 
-def text_to_speech(text, language_code='en-GB'):
+def text_to_speech(text, filename='output.mp3', language_code='en-GB'):
     # Instantiates a client
     client = texttospeech.TextToSpeechClient()
 
@@ -73,7 +74,6 @@ def text_to_speech(text, language_code='en-GB'):
     # voice parameters and audio file type
     response = client.synthesize_speech(synthesis_input, voice, audio_config)
 
-    filename = 'static/tmp/output-{0}.mp3'.format(uuid.uuid4())
     with open(filename, 'wb') as out:
         out.write(response.audio_content)
         print('Audio content written to file "{0}"'.format(filename))

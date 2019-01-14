@@ -6,21 +6,21 @@ from pydub import AudioSegment
 import json
 from flask import Flask, request, render_template, url_for, jsonify
 
+from google_apis import text_to_speech, transcribe_speech, translate_text
+
 lib_dir = os.path.join(os.getcwd(), "./tensorflow")
 sys.path.append(lib_dir)
 
-from normalise import neg23File
 from predict import predict
-from google_apis import text_to_speech, transcribe_speech, translate_text
+
 
 def prolong_audio(fname, expected_duration):
-    # if the audio file is shorter than it should be, 
-    # a sufficient amount of silence is added
+    # if the audio file is shorter than it should be, a necessary amount of silence is added
     f = AudioSegment.from_wav(fname)
     f_duration = f.duration_seconds
     if f_duration > expected_duration:
         return
-    silence_duration = (expected_duration - f_duration) * 1000
+    silence_duration = (expected_duration - f_duration) * 1000 #the method on the line below uses miliseconds
     silence = AudioSegment.silent(duration=silence_duration)
     final = f + silence
     final.export(fname, format="wav")
@@ -32,30 +32,18 @@ app = Flask(__name__)
 def index():
     
     if request.method == 'POST':
-
+        # writing the recorded audio
         filename = 'static/tmp/recording_{0}.wav'.format(uuid.uuid4())
-        downsampled = 'static/tmp/downsampled_{0}.wav'.format(uuid.uuid4())
-
         f = open(filename, 'wb')
         f.write(request.data)
         f.close()
 
+        # adding silence if the audio file is not long enough
         prolong_audio(filename, 3)
 
-        command = ["ffmpeg", "-i", filename, "-map", "0", "-ac", "1", "-ar", "16000", downsampled]
-        subprocess.call(command)
-        
-        # audio normalisation
-        neg23File(downsampled)
-
         # detecting the language in audio 
-        try:
-            detected_lang, probabilities = predict(downsampled)
-            probabilities = ' '.join(str(format(elem, '.4f')) for elem in probabilities)
-        except Exception as e:
-            print( 'Error occured:\n{}'.format(e) )
-
-        os.remove(downsampled)
+        detected_lang, probabilities = predict(filename)
+        probabilities = ' '.join(str(format(elem, '.4f')) for elem in probabilities)
 
         flag = 'static/images/{}.png'.format(detected_lang)
         
@@ -68,7 +56,6 @@ def index():
 def get_transcription():
     filename = request.args.get('filename')
     detected_lang = request.args.get('detected_lang')
-    # transcribes what's said in the audio. Does it better when the audio's not downsampled.
     transcription = transcribe_speech(filename, detected_lang)
     os.remove(filename)
     return jsonify(transcription=transcription)
@@ -85,7 +72,7 @@ def get_translation():
 def get_output_speech():
     translation = request.args.get('translation')
     # text-to-speech of the translated text
-    output_speech = text_to_speech(translation)
+    output_speech = text_to_speech(translation, 'static/tmp/output_{0}.mp3'.format(uuid.uuid4()))
     return jsonify(output_speech=output_speech)
 
 

@@ -8,3 +8,5 @@ tensorflow/gcloud_account\.json
 tensorflow/trained_model/
 
 static/tmp/
+
+gcloud_account\.json
