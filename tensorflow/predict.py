@@ -5,18 +5,20 @@ import time
 import numpy as np
 import tensorflow
 import tensorflow.keras
+from tensorflow.keras.models import load_model
 from yaml import load
 
 # local modules
 from SpectrogramGenerator import SpectrogramGenerator
-from load_compile_model import load_compile_model
+from compile_model import compile_model
 
 tensorflow.keras.backend.clear_session()
 
 # change the path to weights accordingly
 model_dir = 'tensorflow/trained_model/weights.07.model'
 print("Loading model: {}".format(model_dir))
-model = load_compile_model(model_dir)
+model = load_model(model_dir)
+model = compile_model(model)
 
 # https://github.com/keras-team/keras/issues/6462#issuecomment-385962748
 global graph
