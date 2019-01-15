@@ -8,9 +8,10 @@ Here's a short, 1-minute, excerpt from the movie based on the mentioned novel, f
 [![The Babel Fish | YouTube](https://img.youtube.com/vi/YWqHkYtREAE/0.jpg)](https://www.youtube.com/watch?v=YWqHkYtREAE)
   
 
-This translator, named *The Babel Fish v0.01* achieves something that reminds of it is by using a neural network to identify the language that a speaker is talking. It currently supports Croatian, French and Spanish and the default output language is English.
-
+This translator, named *The Babel Fish v0.01* achieves something that reminds of it by using a neural network to identify the language that a speaker is talking. 
 Once it has recognised the language, that information is passed on to several Google APIs in order to produce the English translation of it and to return it as synthesised speech.
+	
+It currently supports Croatian, French and Spanish and the default output language is English.
 
 Here you can see the video of the application in action
 
