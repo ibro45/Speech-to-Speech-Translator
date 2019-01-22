@@ -100,7 +100,7 @@ function startRecording() {
 async function stopRecording() {
 	//disable the stop button, enable the record too allow for new recordings
 	stopButton.disabled = true;
-	document.getElementById("formats").innerHTML="Format: start recording to see sample rate"
+	
 	//tell the recorder to stop the recording
 	rec.stop();
 
@@ -112,6 +112,7 @@ async function stopRecording() {
 
 	// waits for all requests to finish before enabling the recordButton again
 	waitForRequestsToBeDone()
+	document.getElementById("formats").innerHTML="Format: start recording to see sample rate"
 }
 
 function waitForRequestsToBeDone() {
