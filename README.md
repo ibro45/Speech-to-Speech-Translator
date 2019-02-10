@@ -16,8 +16,7 @@ It currently supports Croatian, French and Spanish and the default output langua
 Here you can see the video of the application in action
 
 VIDEO
-
-The application is also available online and can be found here: [The Babel Fish v0.01](a) SREDIT LINK  
+[![The Babel Fish v0.01| YouTube](https://img.youtube.com/vi/RN3c_3j5m4U/0.jpg)](https://www.youtube.com/watch?v=RN3c_3j5m4U)
 
 ## Technical details
 
